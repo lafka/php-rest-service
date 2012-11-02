@@ -1,12 +1,12 @@
 <?php
 
-require_once 'lib/SplClassLoader.php';
-$c =  new SplClassLoader("Tuxed", "lib");
-$c->register();
+require_once "lib/RestService/Http/HttpRequest.php";
+require_once "lib/RestService/Http/IncomingHttpRequest.php";
+require_once "lib/RestService/Http/IncomingHttpRequestException.php";
 
-use \Tuxed\Http\HttpRequest as HttpRequest;
-use \Tuxed\Http\IncomingHttpRequest as IncomingHttpRequest;
-use \Tuxed\Http\IncomingHttpRequestException as IncomingHttpRequestException;
+use \RestService\Http\HttpRequest as HttpRequest;
+use \RestService\Http\IncomingHttpRequest as IncomingHttpRequest;
+use \RestService\Http\IncomingHttpRequestException as IncomingHttpRequestException;
 
 class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
         $_SERVER['PHP_AUTH_USER'] = "user";
         $_SERVER['PHP_AUTH_PW'] = "pass";
 
-        $stub = $this->getMock('\Tuxed\Http\IncomingHttpRequest', array('getRequestHeaders'));
+        $stub = $this->getMock('\RestService\Http\IncomingHttpRequest', array('getRequestHeaders'));
         $stub->expects($this->any())
                 ->method('getRequestHeaders')
                 ->will($this->returnValue(array("A" => "B")));
@@ -64,7 +64,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
         $_SERVER['CONTENT_LENGTH'] = strlen($content);
         $_SERVER['HTTPS'] = $https;
 
-        $stub = $this->getMock('\Tuxed\Http\IncomingHttpRequest', array('getRequestHeaders', 'getRawContent'));
+        $stub = $this->getMock('\RestService\Http\IncomingHttpRequest', array('getRequestHeaders', 'getRawContent'));
         $stub->expects($this->any())
                 ->method('getRequestHeaders')
                 ->will($this->returnValue(array("A" => "B")));
@@ -92,7 +92,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tuxed\Http\IncomingHttpRequestException
+     * @expectedException \RestService\Http\IncomingHttpRequestException
      */
     public function testNoServer()
     {

@@ -1,12 +1,16 @@
 <?php
 
-require_once 'lib/SplClassLoader.php';
-$c =  new SplClassLoader("Tuxed", "lib");
-$c->register();
+require_once "lib/RestService/Http/HttpRequest.php";
+require_once "lib/RestService/Http/HttpRequestException.php";
 
-use \Tuxed\Http\HttpRequestException as HttpRequestException;
-use \Tuxed\Http\HttpRequest as HttpRequest;
-use \Tuxed\Http\UriException as UriException;
+require_once "lib/RestService/Http/Uri.php";
+require_once "lib/RestService/Http/UriException.php";
+
+require_once "lib/RestService/Http/Utils.php";
+
+use \RestService\Http\HttpRequestException as HttpRequestException;
+use \RestService\Http\HttpRequest as HttpRequest;
+use \RestService\Http\UriException as UriException;
 
 class HttpRequestTest extends PHPUnit_Framework_TestCase
 {
@@ -63,7 +67,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tuxed\Http\HttpRequestException
+     * @expectedException \RestService\Http\HttpRequestException
      */
     public function testTryGetPostParametersOnGetRequest()
     {
@@ -72,7 +76,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tuxed\Http\HttpRequestException
+     * @expectedException \RestService\Http\HttpRequestException
      */
     public function testTrySetPostParametersOnGetRequest()
     {
@@ -81,7 +85,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tuxed\Http\HttpRequestException
+     * @expectedException \RestService\Http\HttpRequestException
      */
 /*    function testTryGetPostParametersWithoutParameters() {
         $h = new HttpRequest("http://www.example.com/request", "POST");
@@ -89,7 +93,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }*/
 
     /**
-     * @expectedException \Tuxed\Http\HttpRequestException
+     * @expectedException \RestService\Http\HttpRequestException
      */
 /*    function testTryGetPostParametersWithRawContent() {
         $h = new HttpRequest("http://www.example.com/request", "POST");
@@ -98,7 +102,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }*/
 
     /**
-     * @expectedException \Tuxed\Http\UriException
+     * @expectedException \RestService\Http\UriException
      */
     public function testInvalidUri()
     {
@@ -106,7 +110,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tuxed\Http\HttpRequestException
+     * @expectedException \RestService\Http\HttpRequestException
      */
     public function testUnsupportedRequestMethod()
     {

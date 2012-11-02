@@ -1,11 +1,10 @@
 <?php
 
-require_once 'lib/SplClassLoader.php';
-$c =  new SplClassLoader("Tuxed", "lib");
-$c->register();
+require_once "lib/RestService/Http/Uri.php";
+require_once "lib/RestService/Http/UriException.php";
 
-use \Tuxed\Http\Uri as Uri;
-use \Tuxed\Http\UriException as UriException;
+use \RestService\Http\Uri as Uri;
+use \RestService\Http\UriException as UriException;
 
 class UriTest extends PHPUnit_Framework_TestCase
 {
@@ -115,7 +114,7 @@ class UriTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Tuxed\Http\UriException
+     * @expectedException \RestService\Http\UriException
      */
     public function testMalformedUri()
     {
