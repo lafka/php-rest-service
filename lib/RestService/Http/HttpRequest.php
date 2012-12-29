@@ -231,12 +231,12 @@ class HttpRequest
     {
         // FIXME: what if multiple wildcard variables are defined?
 
-        if (!in_array($requestMethod, $this->_methodMatch)) {
-            array_push($this->_methodMatch, $requestMethod);
-        }
-
         if ($requestMethod !== $this->getRequestMethod()) {
             return FALSE;
+        }
+
+        if (!in_array($requestMethod, $this->_methodMatch)) {
+            array_push($this->_methodMatch, $requestMethod);
         }
 
         if (NULL === $requestPattern) {
@@ -244,10 +244,11 @@ class HttpRequest
             return TRUE;
         }
 
-        if(0 === preg_match_all('#:([\w]+)\+?#', $requestPattern, $matches)) {
-            return FALSE;
+        if (0 === preg_match_all('#:([\w]+)\+?#', $requestPattern, $matches)) {
+            // should be exact match
+            return strpos($this->getPathInfo(), "/") === 0 && $this->getPathInfo() === $requestPattern;
         }
-        foreach($matches[0] as $m) {
+        foreach ($matches[0] as $m) {
             if (strpos($m, "+") === strlen($m) -1) {
                 // replace all wildcard variables with correct regexp
                 $requestPattern = str_replace($m, '([\w|\/]+)', $requestPattern);
@@ -257,12 +258,12 @@ class HttpRequest
             }
         }
 
-        $requestPattern = "^" . $requestPattern . "$";
+        $requestPattern = "#^" . $requestPattern . "$#";
 
-        if(0 === preg_match('#' . $requestPattern . '#', $this->getPathInfo(), $parameters)) {
+        if (0 === preg_match($requestPattern, $this->getPathInfo(), $parameters)) {
             return FALSE;
         }
-    
+
         $parameters = array_slice($parameters, 1);
 
         $this->_patternMatch = TRUE;
@@ -270,7 +271,7 @@ class HttpRequest
 
         return TRUE;
     }
-    
+
     public function matchRestDefault($callback)
     {
         $callback($this->_methodMatch, $this->_patternMatch);

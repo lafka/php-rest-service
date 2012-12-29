@@ -172,10 +172,17 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         }));
     }
 
-    public function testMatchRestWrongMethod()
+    public function testMatchRestNoReplacement()
     {
         $h = new HttpRequest("http://www.example.org/api.php", "POST");
         $h->setPathInfo("/foo/bar/baz");
+        $this->assertTrue($h->matchRest("POST", "/foo/bar/baz", function() { } ));
+    }
+
+    public function testMatchRestWrongMethod()
+    {
+        $h = new HttpRequest("http://www.example.org/api.php", "POST");
+        $h->setPathInfo("/");
         $this->assertFalse($h->matchRest("GET", "/:one/:two/:three", NULL));
     }
 
@@ -276,8 +283,6 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $h->setPathInfo("/foo");
         $this->assertFalse($h->matchRest("GET", "/foo/bar/:foo/bar/bar", NULL));
     }
-
-
 
     public function testMatchRestEmptyResource()
     {
