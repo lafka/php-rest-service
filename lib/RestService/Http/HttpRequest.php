@@ -241,20 +241,31 @@ class HttpRequest
 
         if (NULL === $requestPattern) {
             // all paths match this rule
+            $this->_patternMatch = TRUE;
+
             return TRUE;
         }
 
-        if (0 === preg_match_all('#:([\w]+)\+?#', $requestPattern, $matches)) {
+        if (0 !== strpos($this->getPathInfo(), "/") || 0 !== strpos($requestPattern, "/")) {
+            return FALSE;
+        }
+
+        if (0 === preg_match_all('#:([\w|:]+)\+?#', $requestPattern, $matches)) {
             // should be exact match
-            return strpos($this->getPathInfo(), "/") === 0 && $this->getPathInfo() === $requestPattern;
+            if ($this->getPathInfo() === $requestPattern) {
+                $this->_patternMatch = TRUE;
+                call_user_func_array($callback, array());
+
+                return TRUE;
+            }
         }
         foreach ($matches[0] as $m) {
             if (strpos($m, "+") === strlen($m) -1) {
                 // replace all wildcard variables with correct regexp
-                $requestPattern = str_replace($m, '([\w|\/]+)', $requestPattern);
+                $requestPattern = str_replace($m, '([\w|:|\/]+)', $requestPattern);
             } else {
                 // replace all variables with regexp
-                $requestPattern = str_replace($m, '([\w]+)', $requestPattern);
+                $requestPattern = str_replace($m, '([\w|:]+)', $requestPattern);
             }
         }
 

@@ -296,6 +296,24 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         });
     }
 
+    public function testMatchRestVootGroups()
+    {
+        $h = new HttpRequest("http://localhost/oauth/php-voot-proxy/voot.php", "GET");
+        $h->setPathInfo("/groups/@me");
+        $this->assertTrue($h->matchRest("GET", "/groups/@me", function() {
+        }));
+    }
+
+    public function testMatchRestVootPeople()
+    {
+        $h = new HttpRequest("http://localhost/oauth/php-voot-proxy/voot.php", "GET");
+        $h->setPathInfo("/people/@me/urn:groups:demo:member");
+        $self = &$this;
+        $this->assertTrue($h->matchRest("GET", "/people/@me/:groupId", function($groupId) use ($self) {
+            $self->assertEquals("urn:groups:demo:member", $groupId);
+        }));
+    }
+
     public function testMatchRestAllPaths()
     {
         $h = new HttpRequest("http://www.example.org/api.php", "OPTIONS");
