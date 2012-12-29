@@ -247,9 +247,20 @@ class HttpRequest
         }
         $e = explode("/", $requestPattern);
 
-        if (count($e) !== count($f)) {
-            return FALSE;
+        if (strpos($requestPattern, "*") === strlen($requestPattern) - 1) {
+            // last parameter is wildcard
+            if (count($f) < count($e)) {
+                return FALSE;
+            }
+            $hasWildcard = TRUE;
+        } else {
+            // no wildcard
+            if (count($e) !== count($f)) {
+                return FALSE;
+            }
+            $hasWildcard = FALSE;
         }
+
         $parameters = array();
         for ($i = 0; $i < count($e); $i++) {
             $z = !empty($e[$i]) ? strpos($e[$i], ":") : FALSE;
@@ -261,7 +272,12 @@ class HttpRequest
                 if (empty($f[$i])) {
                     return FALSE;
                 } else {
-                    array_push($parameters, $f[$i]);
+                    if ($i === count($e) - 1 && $hasWildcard ) {
+                        // if this is the last pattern, add the rest to this parameter
+                        array_push($parameters, implode("/", array_slice($f, $i, count($f))));
+                    } else {
+                        array_push($parameters, $f[$i]);
+                    }
                 }
             }
         }
