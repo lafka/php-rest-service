@@ -236,6 +236,12 @@ class HttpRequest
         if ($requestMethod !== $this->getRequestMethod()) {
             return FALSE;
         }
+
+        if (NULL === $requestPattern) {
+            // all paths match this rule
+            return TRUE;
+        }
+
         $pi = $this->getPathInfo();
         if (!is_string($pi) || empty($pi) || FALSE === strpos($pi, "/")) {
             return FALSE;

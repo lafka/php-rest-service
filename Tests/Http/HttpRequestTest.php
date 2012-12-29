@@ -259,6 +259,13 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         });
     }
 
+    public function testMatchRestAllPaths()
+    {
+        $h = new HttpRequest("http://www.example.org/api.php", "OPTIONS");
+        $h->setPathInfo("/foo/bar/baz/foobar");
+        $this->assertTrue($h->matchRest("OPTIONS", NULL, function() { }));
+    }
+
     public function testAuthentication()
     {
         $h = new HttpRequest("http://www.example.org", "GET");
