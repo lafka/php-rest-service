@@ -205,6 +205,36 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         }));
     }
 
+    public function testMatchRestMatchWildcardSomewhere()
+    {
+        $h = new HttpRequest("http://www.example.org/api.php", "GET");
+        $h->setPathInfo("/foo/bar/baz/foobar");
+        $self = &$this;
+        $this->assertTrue($h->matchRest("GET", "/:one/:two+/foobar", function($one, $two) use ($self) {
+            $self->assertEquals($one, "foo");
+            $self->assertEquals($two, "bar/baz");
+        }));
+    }
+
+    public function testMatchRestWrongWildcard()
+    {
+        $h = new HttpRequest("http://www.example.org/api.php", "GET");
+        $h->setPathInfo("/foo/bar/baz/foobar");
+        $this->assertFalse($h->matchRest("GET", "/:abc+/foobaz", NULL));
+    }
+
+    public function testMatchRestMatchWildcardInMiddle()
+    {
+        $h = new HttpRequest("http://www.example.org/api.php", "GET");
+        $h->setPathInfo("/foo/bar/baz/foobar");
+        $self = &$this;
+        $this->assertTrue($h->matchRest("GET", "/:one/:two+/:three", function($one, $two, $three) use ($self) {
+            $self->assertEquals($one, "foo");
+            $self->assertEquals($two, "bar/baz");
+            $self->assertEquals($three, "foobar");
+        }));
+    }
+
     public function testMatchRestNoAbsPath()
     {
         $h = new HttpRequest("http://www.example.org/api.php", "GET");
@@ -246,6 +276,8 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $h->setPathInfo("/foo");
         $this->assertFalse($h->matchRest("GET", "/foo/bar/:foo/bar/bar", NULL));
     }
+
+
 
     public function testMatchRestEmptyResource()
     {
