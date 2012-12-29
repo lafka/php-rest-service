@@ -16,8 +16,8 @@
 * limitations under the License.
 */
 
-require_once "lib/RestService/Http/Uri.php";
-require_once "lib/RestService/Http/UriException.php";
+require_once 'lib/RestService/Http/Uri.php';
+require_once 'lib/RestService/Http/UriException.php';
 
 use \RestService\Http\Uri as Uri;
 use \RestService\Http\UriException as UriException;

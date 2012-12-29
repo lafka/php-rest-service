@@ -16,13 +16,13 @@
 * limitations under the License.
 */
 
-require_once "lib/RestService/Http/HttpRequest.php";
-require_once "lib/RestService/Http/HttpRequestException.php";
+require_once 'lib/RestService/Http/HttpRequest.php';
+require_once 'lib/RestService/Http/HttpRequestException.php';
 
-require_once "lib/RestService/Http/Uri.php";
-require_once "lib/RestService/Http/UriException.php";
+require_once 'lib/RestService/Http/Uri.php';
+require_once 'lib/RestService/Http/UriException.php';
 
-require_once "lib/RestService/Http/Utils.php";
+require_once 'lib/RestService/Http/Utils.php';
 
 use \RestService\Http\HttpRequestException as HttpRequestException;
 use \RestService\Http\HttpRequest as HttpRequest;
