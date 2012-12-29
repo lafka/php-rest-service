@@ -253,7 +253,7 @@ class HttpRequest
         }
         $e = explode("/", $requestPattern);
 
-        if (strpos($requestPattern, "*") === strlen($requestPattern) - 1) {
+        if (strpos($requestPattern, "+") === strlen($requestPattern) - 1) {
             // last parameter is wildcard
             if (count($f) < count($e)) {
                 return FALSE;

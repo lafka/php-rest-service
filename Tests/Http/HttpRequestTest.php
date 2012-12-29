@@ -190,7 +190,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     {
         $h = new HttpRequest("http://www.example.org/api.php", "GET");
         $h->setPathInfo("/foo/bar/");
-        $this->assertFalse($h->matchRest("GET", "/:one/:two/:three*", NULL));
+        $this->assertFalse($h->matchRest("GET", "/:one/:two/:three+", NULL));
     }
 
     public function testMatchRestMatchWildcard()
@@ -198,7 +198,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $h = new HttpRequest("http://www.example.org/api.php", "GET");
         $h->setPathInfo("/foo/bar/baz/foobar");
         $self = &$this;
-        $this->assertTrue($h->matchRest("GET", "/:one/:two/:three*", function($one, $two, $three) use ($self) {
+        $this->assertTrue($h->matchRest("GET", "/:one/:two/:three+", function($one, $two, $three) use ($self) {
             $self->assertEquals($one, "foo");
             $self->assertEquals($two, "bar");
             $self->assertEquals($three, "baz/foobar");
