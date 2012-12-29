@@ -67,12 +67,12 @@ class HttpResponse
         505 => "HTTP Version Not Supported"
     );
 
-    public function __construct($statusCode = 200, $contentType = "text/html;charset=utf-8")
+    public function __construct($statusCode = 200, $contentType = "text/html")
     {
         $this->_headers = array();
         $this->setStatusCode($statusCode);
-        // if no "Content-Type" header is specified PHP will use "text/html" by default
-        $this->setContent($contentType);
+        $this->setContentType($contentType);
+        $this->setContent(NULL);
     }
 
     public function getContent()
