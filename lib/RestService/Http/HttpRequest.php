@@ -229,29 +229,31 @@ class HttpRequest
 
     public function matchRest($requestMethod, $requestPattern, $callback)
     {
-        // FIXME: what if multiple wildcard variables are defined?
-
-        if ($requestMethod !== $this->getRequestMethod()) {
-            return FALSE;
-        }
-
+        // record the method so it can be used to construct the "Allow" header
+        // if no pattern matches the request
         if (!in_array($requestMethod, $this->_methodMatch)) {
             array_push($this->_methodMatch, $requestMethod);
         }
-
+        if ($requestMethod !== $this->getRequestMethod()) {
+            return FALSE;
+        }
+        // if no pattern is defined, all paths are valid
         if (NULL === $requestPattern) {
-            // all paths match this rule
             $this->_patternMatch = TRUE;
 
             return TRUE;
         }
-
+        // both the pattern and request path should start with a "/"
         if (0 !== strpos($this->getPathInfo(), "/") || 0 !== strpos($requestPattern, "/")) {
             return FALSE;
         }
-
-        if (0 === preg_match_all('#:([\w|:]+)\+?#', $requestPattern, $matches)) {
-            // should be exact match
+        // check for variables in the requestPattern
+        $pma = preg_match_all('#:([\w]+)\+?#', $requestPattern, $matches);
+        if (FALSE === $pma) {
+            throw new HttpRequestException("regex for variable search failed");
+        }
+        if (0 === $pma) {
+            // no matches found, so no variables in the pattern, pattern and request must be identical
             if ($this->getPathInfo() === $requestPattern) {
                 $this->_patternMatch = TRUE;
                 call_user_func_array($callback, array());
@@ -259,26 +261,24 @@ class HttpRequest
                 return TRUE;
             }
         }
+        // replace all the variables with a regex so the actual value in the request
+        // can be captured
         foreach ($matches[0] as $m) {
-            if (strpos($m, "+") === strlen($m) -1) {
-                // replace all wildcard variables with correct regexp
-                $requestPattern = str_replace($m, '([\w|:|\/]+)', $requestPattern);
-            } else {
-                // replace all variables with regexp
-                $requestPattern = str_replace($m, '([\w|:]+)', $requestPattern);
-            }
+            // determine pattern based on whether variable is wildcard or not
+            $pattern = (strpos($m, "+") === strlen($m) -1) ? '(.+?)' : '([^/]+)';
+            $requestPattern = str_replace($m, $pattern, $requestPattern);
         }
-
-        $requestPattern = "#^" . $requestPattern . "$#";
-
-        if (0 === preg_match($requestPattern, $this->getPathInfo(), $parameters)) {
+        $pm = preg_match("#^" . $requestPattern . "$#", $this->getPathInfo(), $parameters);
+        if (FALSE === $pm) {
+            throw new HttpRequestException("regex for path matching failed");
+        }
+        if (0 === $pm) {
+            // request path does not match pattern
             return FALSE;
         }
-
-        $parameters = array_slice($parameters, 1);
-
+        // request path matches pattern!
         $this->_patternMatch = TRUE;
-        call_user_func_array($callback, $parameters);
+        call_user_func_array($callback, array_slice($parameters, 1));
 
         return TRUE;
     }

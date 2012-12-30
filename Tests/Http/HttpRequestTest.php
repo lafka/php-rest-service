@@ -176,7 +176,8 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     {
         $h = new HttpRequest("http://www.example.org/api.php", "POST");
         $h->setPathInfo("/foo/bar/baz");
-        $this->assertTrue($h->matchRest("POST", "/foo/bar/baz", function() { } ));
+        $this->assertTrue($h->matchRest("POST", "/foo/bar/baz", function() {
+        }));
     }
 
     public function testMatchRestWrongMethod()
@@ -256,7 +257,7 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($h->matchRest("GET", "", NULL));
     }
 
-    public function testMatchRestEmptyRequestPath()
+    public function testMatchRestNoPatternPath()
     {
         $h = new HttpRequest("http://www.example.org/api.php", "GET");
         $h->setPathInfo("/foo");
@@ -289,9 +290,11 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $h = new HttpRequest("http://www.example.org/api.php", "GET");
         $h->setPathInfo("/foo/");
         $this->assertFalse($h->matchRest("GET", "/foo/:bar", NULL));
+        $this->assertFalse($h->matchRest("POST", "/foo/:bar", NULL));
+        $this->assertFalse($h->matchRest("PUT", "/foo/:bar", NULL));
         $self = &$this;
         $h->matchRestDefault(function($methodMatch, $patternMatch) use ($self) {
-            $self->assertEquals(array("GET"), $methodMatch);
+            $self->assertEquals(array("GET", "POST", "PUT"), $methodMatch);
             $self->assertFalse($patternMatch);
         });
     }
