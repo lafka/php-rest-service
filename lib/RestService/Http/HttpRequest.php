@@ -229,6 +229,11 @@ class HttpRequest
 
     public function matchRest($requestMethod, $requestPattern, $callback)
     {
+        // we already matched something before...ignore this one
+        if (TRUE === $this->_patternMatch) {
+            return FALSE;
+        }
+
         // record the method so it can be used to construct the "Allow" header
         // if no pattern matches the request
         if (!in_array($requestMethod, $this->_methodMatch)) {
