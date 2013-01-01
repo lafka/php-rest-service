@@ -252,6 +252,10 @@ class HttpRequest
         if (0 !== strpos($this->getPathInfo(), "/") || 0 !== strpos($requestPattern, "/")) {
             return FALSE;
         }
+
+        // handle optional parameters
+        $requestPattern = str_replace(')', ')?', $requestPattern);
+
         // check for variables in the requestPattern
         $pma = preg_match_all('#:([\w]+)\+?#', $requestPattern, $matches);
         if (FALSE === $pma) {
@@ -270,7 +274,8 @@ class HttpRequest
         // can be captured
         foreach ($matches[0] as $m) {
             // determine pattern based on whether variable is wildcard or not
-            $pattern = (strpos($m, "+") === strlen($m) -1) ? '(.+?)' : '([^/]+)';
+            $mm = str_replace(array(":", "+"), "", $m);
+            $pattern = (strpos($m, "+") === strlen($m) -1) ? '(?P<' . $mm . '>(.+?))' : '(?P<' . $mm . '>([^/]+))';
             $requestPattern = str_replace($m, $pattern, $requestPattern);
         }
         $pm = preg_match("#^" . $requestPattern . "$#", $this->getPathInfo(), $parameters);
@@ -281,9 +286,14 @@ class HttpRequest
             // request path does not match pattern
             return FALSE;
         }
+        foreach ($parameters as $k => $v) {
+            if (!is_string($k)) {
+                unset($parameters[$k]);
+            }
+        }
         // request path matches pattern!
         $this->_patternMatch = TRUE;
-        call_user_func_array($callback, array_slice($parameters, 1));
+        call_user_func_array($callback, array_values($parameters));
 
         return TRUE;
     }

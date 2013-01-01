@@ -332,6 +332,30 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($h->matchRest("GET", "/foo/bar", function() { }));
     }
 
+    public function testOptionalMatch()
+    {
+        $h = new HttpRequest("http://localhost/php-remoteStorage/api.php", "GET");
+        $h->setPathInfo("/admin/public/money/");
+        $self = &$this;
+        $this->assertTrue($h->matchRest("GET", "/:user/public/:module(/:path+)/", function($user, $module, $path = NULL) use ($self) {
+            $self->assertEquals("admin", $user);
+            $self->assertEquals("money", $module);
+            $self->assertNull($path);
+        }));
+    }
+
+    public function testOtherOptionalMatch()
+    {
+        $h = new HttpRequest("http://localhost/php-remoteStorage/api.php", "GET");
+        $h->setPathInfo("/admin/public/money/a/b/c/");
+        $self = &$this;
+        $this->assertTrue($h->matchRest("GET", "/:user/public/:module(/:path+)/", function($user, $module, $path = NULL) use ($self) {
+            $self->assertEquals("admin", $user);
+            $self->assertEquals("money", $module);
+            $self->assertEquals("a/b/c", $path);
+        }));
+    }
+
     public function testAuthentication()
     {
         $h = new HttpRequest("http://www.example.org", "GET");
