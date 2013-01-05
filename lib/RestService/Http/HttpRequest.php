@@ -275,7 +275,7 @@ class HttpRequest
         foreach ($matches[0] as $m) {
             // determine pattern based on whether variable is wildcard or not
             $mm = str_replace(array(":", "+"), "", $m);
-            $pattern = (strpos($m, "+") === strlen($m) -1) ? '(?P<' . $mm . '>(.+?))' : '(?P<' . $mm . '>([^/]+))';
+            $pattern = (strpos($m, "+") === strlen($m) -1) ? '(?P<' . $mm . '>(.+?[^/]))' : '(?P<' . $mm . '>([^/]+))';
             $requestPattern = str_replace($m, $pattern, $requestPattern);
         }
         $pm = preg_match("#^" . $requestPattern . "$#", $this->getPathInfo(), $parameters);
