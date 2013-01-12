@@ -66,6 +66,7 @@ class HttpResponse
         504 => "Gateway Timeout",
         505 => "HTTP Version Not Supported"
     );
+    private $_useXSendfile;
 
     public function __construct($statusCode = 200, $contentType = "text/html")
     {
@@ -74,6 +75,12 @@ class HttpResponse
         $this->setContentType($contentType);
         $this->setContent(NULL);
         $this->setContentFile(NULL);
+        $this->useXSendfile(FALSE);
+    }
+
+    public function useXSendfile($useXSendfile)
+    {
+        $this->_useXSendfile = $useXSendfile;
     }
 
     public function getContent()
@@ -190,9 +197,14 @@ class HttpResponse
             header($k . ": " . $v);
         }
         if (NULL !== $this->getContentFile()) {
-            // efficiently send a file
-            header("Content-Length: " . filesize($this->getContentFile()));
-            readfile($this->getContentFile());
+            if ($this->_useXSendfile) {
+                // use X-Sendfile (see https://tn123.org/mod_xsendfile/)
+                header("X-Sendfile: " . $this->getContentFile());
+            } else {
+                // just use PHP to send it (less efficient than X-Sendfile)
+                header("Content-Length: " . filesize($this->getContentFile()));
+                readfile($this->getContentFile());
+            }
         } else {
             echo $this->getContent();
         }
