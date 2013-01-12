@@ -73,6 +73,7 @@ class HttpResponse
         $this->setStatusCode($statusCode);
         $this->setContentType($contentType);
         $this->setContent(NULL);
+        $this->setContentFile(NULL);
     }
 
     public function getContent()
@@ -103,6 +104,16 @@ class HttpResponse
     public function setContent($content)
     {
         $this->_content = $content;
+    }
+
+    public function getContentFile()
+    {
+        return $this->_contentFile;
+    }
+
+    public function setContentFile($contentFile)
+    {
+        $this->_contentFile = $contentFile;
     }
 
     public function setStatusCode($code)
@@ -178,7 +189,13 @@ class HttpResponse
         foreach ($this->getHeaders() as $k => $v) {
             header($k . ": " . $v);
         }
-        echo $this->getContent();
+        if (NULL !== $this->getContentFile()) {
+            // efficiently send a file
+            header("Content-Length: " . filesize($this->getContentFile()));
+            readfile($this->getContentFile());
+        } else {
+            echo $this->getContent();
+        }
     }
 
     public function __toString()
