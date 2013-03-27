@@ -44,13 +44,12 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
         $stub->expects($this->any())
                 ->method('getRequestHeaders')
                 ->will($this->returnValue(array("A" => "B")));
-        // $this->assertInstanceOf("HttpRequest", $stub->getRequest());
         $request = HttpRequest::fromIncomingHttpRequest($stub);
         $this->assertEquals($request_uri, $request->getRequestUri()->getUri());
         $this->assertEquals("GET", $request->getRequestMethod());
         $this->assertEquals("/foo/bar", $request->getPathInfo());
-        //$this->assertEquals("user", $request->getBasicAuthUser());
-        //$this->assertEquals("pass", $request->getBasicAuthPass());
+        $this->assertEquals("user", $request->getBasicAuthUser());
+        $this->assertEquals("pass", $request->getBasicAuthPass());
     }
 
     public function getDataProvider()

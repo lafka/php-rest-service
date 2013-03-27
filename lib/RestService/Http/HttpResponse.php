@@ -220,14 +220,8 @@ class HttpResponse
         foreach ($this->getHeaders() as $k => $v) {
             $s .= "\t" . ($k . ": " . $v) . PHP_EOL;
         }
-        if (1 === preg_match("|^application/json|", $this->getContentType())) {
-            // format JSON
-            $s .= "Content (formatted JSON):" . PHP_EOL;
-            $s .= Utils::json_format($this->getContent());
-        } else {
-            $s .= "Content:" . PHP_EOL;
-            $s .= $this->getContent();
-        }
+        $s .= "Content:" . PHP_EOL;
+        $s .= $this->getContent();
 
         return $s;
     }

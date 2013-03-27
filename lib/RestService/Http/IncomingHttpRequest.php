@@ -88,6 +88,24 @@ class IncomingHttpRequest
         return file_get_contents("php://input");
     }
 
+    public function getBasicAuthUser()
+    {
+        if (array_key_exists('PHP_AUTH_USER', $_SERVER)) {
+            return $_SERVER['PHP_AUTH_USER'];
+        }
+
+        return NULL;
+    }
+
+    public function getBasicAuthPass()
+    {
+        if (array_key_exists('PHP_AUTH_PW', $_SERVER)) {
+            return $_SERVER['PHP_AUTH_PW'];
+        }
+
+        return NULL;
+    }
+
     public function getRequestHeaders()
     {
         // The $_SERVER environment does not contain the Authorization

@@ -27,6 +27,8 @@ class HttpRequest
     protected $_pathInfo;
     protected $_patternMatch;
     protected $_methodMatch;
+    protected $_basicAuthUser;
+    protected $_basicAuthPass;
 
     public function __construct($requestUri, $requestMethod = "GET")
     {
@@ -37,6 +39,8 @@ class HttpRequest
         $this->_pathInfo = NULL;
         $this->_patternMatch = FALSE;
         $this->_methodMatch = array();
+        $this->_basicAuthUser = NULL;
+        $this->_basicAuthPass = NULL;
     }
 
     public static function fromIncomingHttpRequest(IncomingHttpRequest $i)
@@ -45,6 +49,8 @@ class HttpRequest
         $request->setHeaders($i->getRequestHeaders());
         $request->setContent($i->getContent());
         $request->setPathInfo($i->getPathInfo());
+        $request->setBasicAuthUser($i->getBasicAuthUser());
+        $request->setBasicAuthPass($i->getBasicAuthPass());
 
         return $request;
     }
@@ -205,26 +211,24 @@ class HttpRequest
         return $this->_pathInfo;
     }
 
+    public function setBasicAuthUser($u)
+    {
+        $this->_basicAuthUser = $u;
+    }
+
+    public function setBasicAuthPass($p)
+    {
+        $this->_basicAuthPass = $p;
+    }
+
     public function getBasicAuthUser()
     {
-        try {
-            $userpass = Utils::parseBasicAuthHeader($this->getHeader("Authorization"));
-
-            return $userpass[0];
-        } catch (UtilsException $e) {
-            return NULL;
-        }
+        return $this->_basicAuthUser;
     }
 
     public function getBasicAuthPass()
     {
-        try {
-            $userpass = Utils::parseBasicAuthHeader($this->getHeader("Authorization"));
-
-            return $userpass[1];
-        } catch (UtilsException $e) {
-            return NULL;
-        }
+        return $this->_basicAuthPass;
     }
 
     public function matchRest($requestMethod, $requestPattern, $callback)
@@ -313,14 +317,8 @@ class HttpRequest
         foreach ($this->getHeaders(TRUE) as $v) {
             $s .= "\t" . $v . PHP_EOL;
         }
-        if (1 === preg_match("|^application/json|", $this->getContentType())) {
-            // format JSON
-            $s .= "Content (formatted JSON):" . PHP_EOL;
-            $s .= Utils::json_format($this->getContent());
-        } else {
-            $s .= "Content:" . PHP_EOL;
-            $s .= $this->getContent();
-        }
+        $s .= "Content:" . PHP_EOL;
+        $s .= $this->getContent();
 
         return $s;
     }

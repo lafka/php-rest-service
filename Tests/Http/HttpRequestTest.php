@@ -22,8 +22,6 @@ require_once 'lib/RestService/Http/HttpRequestException.php';
 require_once 'lib/RestService/Http/Uri.php';
 require_once 'lib/RestService/Http/UriException.php';
 
-require_once 'lib/RestService/Http/Utils.php';
-
 use \RestService\Http\HttpRequestException as HttpRequestException;
 use \RestService\Http\HttpRequest as HttpRequest;
 use \RestService\Http\UriException as UriException;
@@ -378,7 +376,8 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
     public function testAuthentication()
     {
         $h = new HttpRequest("http://www.example.org", "GET");
-        $h->setHeader("Authorization", "Basic " . base64_encode("foo:bar"));
+        $h->setBasicAuthUser("foo");
+        $h->setBasicAuthPass("bar");
         $this->assertEquals("foo", $h->getBasicAuthUser());
         $this->assertEquals("bar", $h->getBasicAuthPass());
     }
