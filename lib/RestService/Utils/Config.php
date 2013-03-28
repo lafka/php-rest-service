@@ -83,4 +83,31 @@ class Config
         $this->_configValues[$section][$key] = $value;
     }
 
+    public function toIni()
+    {
+        return self::arrayToIni($this->_configValues);
+    }
+
+    public static function arrayToIni(array $iniArray)
+    {
+        $output = "";
+        foreach ($iniArray as $k => $v) {
+            if (!is_array($v)) {
+                $output .= $k . "=" . $v . PHP_EOL;
+            } else {
+                $arrayKeys = array_keys($v);
+                if (is_int($arrayKeys[0])) {
+                    foreach ($v as $v2) {
+                        $output .= $k . "[]=" . $v2 . PHP_EOL;
+                    }
+                } else {
+                    $output .= "[" . $k . "]" . PHP_EOL;
+                    $output .= self::arrayToIni($v, $output);
+                }
+            }
+        }
+
+        return $output;
+    }
+
 }
