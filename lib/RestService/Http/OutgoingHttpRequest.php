@@ -35,6 +35,12 @@ class OutgoingHttpRequest
             curl_setopt($curlChannel, CURLOPT_POSTFIELDS, $request->getContent());
         }
 
+        $basicAuthUser = $request->getBasicAuthUser();
+        $basicAuthPass = $request->getBasicAuthPass();
+        if (NULL !== $basicAuthUser) {
+            $request->setHeader("Authorization", "Basic " . base64_encode($basicAuthUser . ":" . $basicAuthPass));
+        }
+
         // Including HTTP headers in request
         $headers = $request->getHeaders(TRUE);
 

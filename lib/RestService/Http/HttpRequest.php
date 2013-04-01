@@ -313,6 +313,9 @@ class HttpRequest
         $s .= "*HttpRequest*" . PHP_EOL;
         $s .= "Request Method: " . $this->getRequestMethod() . PHP_EOL;
         $s .= "Request URI: " . $this->getRequestUri()->getUri() . PHP_EOL;
+        if (NULL !== $this->getBasicAuthUser()) {
+            $s .= "Basic Authentication: " . $this->getBasicAuthUser() . ":" . $this->getBasicAuthPass();
+        }
         $s .= "Headers:" . PHP_EOL;
         foreach ($this->getHeaders(TRUE) as $v) {
             $s .= "\t" . $v . PHP_EOL;
