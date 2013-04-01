@@ -44,6 +44,7 @@ try {
             }
         } else {
             $response = new HttpResponse(405, "text/plain");
+            $response->setHeader("Allow", "GET");
             $response->setContent("[405] request method not allowed");
         }
     });
