@@ -16,6 +16,11 @@ You can run the PHPUnit tests if PHPUnit is installed:
 
     $ phpunit Tests/
 
+# Example
+Some simple sample applications can be found in the `examples/` directory. 
+Please refer to them to see how to use this library. The examples should work
+"as is" when placed in a directory reachable through a web server.
+
 # License
 Licensed under the Apache License, Version 2.0;
 
