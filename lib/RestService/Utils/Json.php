@@ -22,7 +22,7 @@ class Json
 {
     public static function enc(array $data, $prettyPrint = FALSE)
     {
-        $p = JSON_FORCE_OBJECT;
+        $p = 0;
         if ($prettyPrint && defined(JSON_PRETTY_PRINT)) {
             $p |= JSON_PRETTY_PRINT;
         }
