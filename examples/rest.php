@@ -24,10 +24,12 @@ require_once '../lib/RestService/Http/HttpRequest.php';
 require_once '../lib/RestService/Http/HttpResponse.php';
 require_once '../lib/RestService/Http/IncomingHttpRequest.php';
 require_once '../lib/RestService/Http/Uri.php';
+require_once '../lib/RestService/Utils/Json.php';
 
 use \RestService\Http\HttpRequest as HttpRequest;
 use \RestService\Http\HttpResponse as HttpResponse;
 use \RestService\Http\IncomingHttpRequest as IncomingHttpRequest;
+use \RestService\Utils\Json as Json;
 
 $request = NULL;
 $response = NULL;
@@ -61,16 +63,16 @@ try {
        if (!in_array($request->getRequestMethod(), $methodMatch)) {
             $response = new HttpResponse(405, "application/json");
             $response->setHeader("Allow", implode(",", $methodMatch));
-            $response->setContent(json_encode(array("error" => "method_not_allowed", "error_description" => "request method not allowed")));
+            $response->setContent(Json::enc(array("error" => "method_not_allowed", "error_description" => "request method not allowed")));
         } elseif (!$patternMatch) {
             $response = new HttpResponse(404, "application/json");
-            $response->setContent(json_encode(array("error" => "not_found", "error_description" => "resource not found")));
+            $response->setContent(Json::enc(array("error" => "not_found", "error_description" => "resource not found")));
         }
     });
 
 } catch (Exception $e) {
     $response = new HttpResponse(500, "application/json");
-    $response->setContent(json_encode(array("error" => "internal_server_error", "error_description" => $e->getMessage())));
+    $response->setContent(Json::enc(array("error" => "internal_server_error", "error_description" => $e->getMessage())));
 }
 
 $response->sendResponse();
