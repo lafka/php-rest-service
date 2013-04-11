@@ -39,7 +39,7 @@ try {
 
     $request->matchRest("GET", "/hello/:str", function($str) use (&$response) {
         $response = new HttpResponse(200, "application/json");
-        $response->setContent(json_encode(array("type" => "GET", "response" => "hello " . $str)));
+        $response->setContent(Json::enc(array("type" => "GET", "response" => "hello " . $str)));
     });
 
     $request->matchRest("POST", "/hello/:str", function($str) use (&$response) {
@@ -50,7 +50,7 @@ try {
             throw new Exception("you cannot say 'foo'!'");
         }
         $response = new HttpResponse(200, "application/json");
-        $response->setContent(json_encode(array("type" => "POST", "response" => "hello " . $str)));
+        $response->setContent(Json::enc(array("type" => "POST", "response" => "hello " . $str)));
     });
 
     $request->matchRestDefault(function($methodMatch, $patternMatch) use ($request, &$response) {
