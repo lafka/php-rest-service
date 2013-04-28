@@ -128,7 +128,7 @@ class HttpResponse
         if (!is_numeric($code) || !array_key_exists($code, $this->_statusCodes)) {
             throw new HttpResponseException("invalid status code");
         }
-        $this->_statusCode = $code;
+        $this->_statusCode = (int) $code;
     }
 
     public function setHeaders(array $headers)
