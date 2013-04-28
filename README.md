@@ -14,7 +14,7 @@ Furthermore extensive tests are available written in PHPUnit.
 # Tests
 You can run the PHPUnit tests if PHPUnit is installed:
 
-    $ phpunit Tests/
+    $ phpunit tests/
 
 # Examples
 Some simple sample applications can be found in the `examples/` directory. 
