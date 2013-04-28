@@ -210,6 +210,37 @@ class HttpResponse
         }
     }
 
+    /**
+     * Construct the HttpResponse from a file, you can create the
+     * dumps from actual traffic using "curl -i http://www.example.org > dump.txt"
+     */
+    public static function fromFile($file)
+    {
+        $data = @file_get_contents($file);
+        if (FALSE === $data) {
+            throw new HttpResponseException("unable to read file");
+        }
+        $response = new self();
+
+        // separate the headers from the content
+        list($headerLines, $contentData) = explode("\r\n\r\n", $data);
+
+        $headerLinesArray = explode("\r\n", $headerLines);
+
+        // First header is HTTP response code, e.g.: HTTP/1.1 200 OK
+        $responseCode = substr($headerLinesArray[0], 9, 3);
+        $response->setStatusCode($responseCode);
+
+        unset($headerLinesArray[0]);
+        foreach ($headerLinesArray as $headerLine) {
+            list($k, $v) = explode(":", $headerLine);
+            $response->setHeader(trim($k), trim($v));
+        }
+        $response->setContent($contentData);
+
+        return $response;
+    }
+
     public function __toString()
     {
         $s  = PHP_EOL;
