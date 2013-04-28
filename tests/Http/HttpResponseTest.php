@@ -19,12 +19,8 @@
 require_once 'lib/RestService/Http/HttpResponse.php';
 require_once 'lib/RestService/Http/HttpResponseException.php';
 
-//require_once 'lib/RestService/Http/Uri.php';
-//require_once 'lib/RestService/Http/UriException.php';
-
 use \RestService\Http\HttpResponseException as HttpResponseException;
 use \RestService\Http\HttpResponse as HttpResponse;
-//use \RestService\Http\UriException as UriException;
 
 class HttpResponseTest extends PHPUnit_Framework_TestCase
 {

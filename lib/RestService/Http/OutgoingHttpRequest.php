@@ -22,10 +22,17 @@ class OutgoingHttpRequest
 {
     public static function makeRequest(HttpRequest $request)
     {
+        $requestUri = $request->getRequestUri()->getUri();
+        // if the request is towards a file URL, return the response constructed
+        // from file
+        if (0 === strpos($requestUri, "file:///")) {
+            return HttpResponse::fromFile($requestUri);
+        }
+
         $httpResponse = new HttpResponse();
 
         $curlChannel = curl_init();
-        curl_setopt($curlChannel, CURLOPT_URL, $request->getRequestUri()->getUri());
+        curl_setopt($curlChannel, CURLOPT_URL, $requestUri);
         curl_setopt($curlChannel, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($curlChannel, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curlChannel, CURLOPT_TIMEOUT, 10);

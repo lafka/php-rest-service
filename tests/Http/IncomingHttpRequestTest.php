@@ -88,8 +88,6 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
                 ->method('getRawContent')
                 ->will($this->returnValue($content));
 
-        //$this->assertInstanceOf('HttpRequest', $stub->getRequest());
-
         $request = HttpRequest::fromIncomingHttpRequest($stub);
         $this->assertEquals($request_uri, $request->getRequestUri()->getUri());
         $this->assertEquals("POST", $request->getRequestMethod());
