@@ -32,9 +32,11 @@ class JsonTest extends PHPUnit_Framework_TestCase
 
     public function testPrettyEncode()
     {
+        $e = Json::enc(array("foo" => "bar"), TRUE);
         if (defined('JSON_PRETTY_PRINT')) {
-            $e = Json::enc(array("foo" => "bar"), TRUE);
             $this->assertEquals("{\n    \"foo\": \"bar\"\n}", $e);
+        } else {
+            $this->assertEquals('{"foo":"bar"}', $e);
         }
     }
 
