@@ -23,10 +23,10 @@ class Json
     public static function enc(array $data, $prettyPrint = FALSE)
     {
         $p = 0;
-        if ($prettyPrint && defined(JSON_PRETTY_PRINT)) {
+        if ($prettyPrint && defined('JSON_PRETTY_PRINT')) {
             $p |= JSON_PRETTY_PRINT;
         }
-        $jsonData = json_encode($data, $p);
+        $jsonData = @json_encode($data, $p);
         $jsonError = json_last_error();
         if (JSON_ERROR_NONE !== $jsonError) {
             throw new JsonException($jsonError);

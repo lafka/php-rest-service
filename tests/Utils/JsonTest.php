@@ -30,10 +30,27 @@ class JsonTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('{"foo":"bar"}', $e);
     }
 
+    public function testPrettyEncode()
+    {
+        if (defined('JSON_PRETTY_PRINT')) {
+            $e = Json::enc(array("foo" => "bar"), TRUE);
+            $this->assertEquals("{\n    \"foo\": \"bar\"\n}", $e);
+        }
+    }
+
     public function testDecode()
     {
         $d = Json::dec('{"foo":"bar"}');
         $this->assertEquals(array("foo" => "bar"), $d);
+    }
+
+    /**
+     * @expectedException \RestService\Utils\JsonException
+     * @expectedExceptionMessage Malformed UTF-8 characters, possibly incorrectly encoded
+     */
+    public function testBrokenEncode()
+    {
+        $e = Json::enc(array(iconv("UTF-8", "ISO-8859-1","îïêëì")));
     }
 
     /**
