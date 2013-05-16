@@ -22,8 +22,9 @@ class Config
 {
     private $_configFile;
     private $_configValues;
+    protected $_vars;
 
-    public function __construct($configFile)
+    public function __construct($configFile, $vars = array())
     {
         $this->_configFile = $configFile;
 
@@ -31,13 +32,46 @@ class Config
             throw new ConfigException("configuration '$configFile' file not found");
         }
 
+        $vars = array_merge($vars, $this->_defaultVars());
+        $varKeys = array_map(function($k) { return "{{{$k}}}"; }, array_keys($vars));
+
+        $vars = array_combine($varKeys, array_values($vars));
+
         $this->_configValues = parse_ini_file($configFile, TRUE);
+        $this->_vars = $vars;
+    }
+
+    public function setVar($key, $value)
+    {
+        $this->_vars[$key] = $value;
+    }
+
+    public function getVar($key)
+    {
+        if (array_key_exists($key, $this->_vars)) {
+            return (string) $this->_vars[$key];
+        } else {
+              throw new ConfigException("configuration template var '\$$key' not found");
+        }
+    }
+
+    public function getVars($key)
+    {
+        return $this->_vars;
+    }
+
+    protected function _defaultVars() {
+        return array(
+            'rootdir' => getcwd(),
+            'libdir' => getcwd() . DIRECTORY_SEPARATOR . 'lib',
+            'wwwdir' => getcwd() . DIRECTORY_SEPARATOR . 'www',
+        );
     }
 
     public function getValue($key, $required = TRUE)
     {
         if (array_key_exists($key, $this->_configValues)) {
-            return $this->_configValues[$key];
+            return $this->_parseValue($this->_configValues[$key]);
         } else {
             if ($required) {
                 throw new ConfigException("configuration key '$key' not set in configuration file'");
@@ -50,7 +84,7 @@ class Config
     public function getSectionValue($section, $key, $required = TRUE)
     {
         if (array_key_exists($section, $this->_configValues) && array_key_exists($key, $this->_configValues[$section])) {
-            return $this->_configValues[$section][$key];
+            return $this->_parseValue($this->_configValues[$section][$key]);
         } else {
             if ($required) {
                 throw new ConfigException("configuration key '$key' in section '$section' not set in configuration file'");
@@ -60,10 +94,14 @@ class Config
         }
     }
 
+    protected function _parseValue($val) {
+        return str_replace(array_keys($this->_vars) ,array_values($this->_vars), $val);
+    }
+
     public function getSectionValues($section, $required = TRUE)
     {
         if (array_key_exists($section, $this->_configValues)) {
-            return $this->_configValues[$section];
+            return array_map(function($val) { return $this->_parseValue($val); }, $this->_configValues[$section]);
         } else {
             if ($required) {
                 throw new ConfigException("configuration section '$section' not set in configuration file'");
