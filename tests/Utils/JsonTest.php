@@ -40,6 +40,14 @@ class JsonTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testMoreEncode()
+    {
+        $this->assertEquals('5', Json::enc(5));
+        $this->assertEquals(5, Json::dec('5'));
+        $this->assertEquals('null', Json::enc(NULL));
+        $this->assertNull(Json::dec('null'));
+    }
+
     public function testDecode()
     {
         $d = Json::dec('{"foo":"bar"}');
@@ -63,4 +71,12 @@ class JsonTest extends PHPUnit_Framework_TestCase
     {
         $e = Json::dec("'foo'");
     }
+
+    public function testValidJson()
+    {
+        $this->assertFalse(Json::isJson('}'));
+        $this->assertTrue(Json::isJson('{}'));
+        $this->assertTrue(Json::isJson('null'));
+    }
+
 }

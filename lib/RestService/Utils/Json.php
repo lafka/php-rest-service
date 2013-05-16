@@ -20,7 +20,8 @@ namespace RestService\Utils;
 
 class Json
 {
-    public static function enc(array $data, $prettyPrint = FALSE)
+
+    public static function enc($data, $prettyPrint = FALSE)
     {
         $p = 0;
         if ($prettyPrint && defined('JSON_PRETTY_PRINT')) {
@@ -44,5 +45,16 @@ class Json
         }
 
         return $data;
+    }
+
+    public static function isJson($jsonData)
+    {
+        try {
+            $data = self::dec($jsonData);
+
+            return TRUE;
+        } catch (JsonException $e) {
+            return FALSE;
+        }
     }
 }
