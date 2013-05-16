@@ -120,6 +120,10 @@ class IncomingHttpRequest
                 if (FALSE !== $keyPositionInArray) {
                     $requestHeaders['AUTHORIZATION'] = $apacheHeaders[$headerKeys[$keyPositionInArray]];
                 }
+        } else {
+            if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+                $requestHeaders['AUTHORIZATION'] = $_SERVER['HTTP_AUTHORIZATION'];
+            }
         }
 
         return $requestHeaders;
