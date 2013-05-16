@@ -28,7 +28,7 @@ class Config
         $this->_configFile = $configFile;
 
         if (!file_exists($configFile) || !is_file($configFile) || !is_readable($configFile)) {
-            throw new ConfigException("configuration file not found");
+            throw new ConfigException("configuration '$configFile' file not found");
         }
 
         $this->_configValues = parse_ini_file($configFile, TRUE);
