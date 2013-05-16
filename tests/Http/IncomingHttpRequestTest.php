@@ -110,15 +110,16 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
     public function testNoServer()
     {
         $i = new IncomingHttpRequest();
-        $r = $i->getRequest();
     }
 
-    /* function testEmptyContent() {
-      $_SERVER['SERVER_PORT'] = $port;
-      $_SERVER['SERVER_NAME'] = $name;
-      $_SERVER['REQUEST_URI'] = $request;
-      $_SERVER['REQUEST_METHOD'] = "GET";
-      $i = new IncomingHttpRequest();
-      $r = $i->getRequest();
-     */
+    public function testHttpAuthorizationHeader()
+    {
+        $_SERVER['SERVER_NAME'] = "foo.example.org";
+        $_SERVER['SERVER_PORT'] = 80;
+        $_SERVER['REQUEST_URI'] = "/resource";
+        $_SERVER['REQUEST_METHOD'] = "GET";
+        $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer xyz';
+        $h = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
+        $this->assertEquals("Bearer xyz", $h->getHeader("Authorization"));
+    }
 }

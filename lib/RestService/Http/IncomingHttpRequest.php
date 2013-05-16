@@ -106,20 +106,32 @@ class IncomingHttpRequest
         return NULL;
     }
 
+    private function _getHeaderValue(array $h, $key)
+    {
+        $headerKeys = array_keys($h);
+        $keyPositionInArray = array_search(strtolower($key), array_map('strtolower', $headerKeys));
+
+        return FALSE !== $keyPositionInArray ? $h[$headerKeys[$keyPositionInArray]] : FALSE;
+    }
+
     public function getRequestHeaders()
     {
-        // The $_SERVER environment does not contain the Authorization
-        // header by default. On Apache this header can be extracted with
-        // apache_request_headers(), but this does not work on other
-        // web servers...
         $requestHeaders = $_SERVER;
         if (function_exists("apache_request_headers")) {
-                $apacheHeaders = apache_request_headers();
-                $headerKeys = array_keys($apacheHeaders);
-                $keyPositionInArray = array_search(strtolower("Authorization"), array_map('strtolower', $headerKeys));
-                if (FALSE !== $keyPositionInArray) {
-                    $requestHeaders['AUTHORIZATION'] = $apacheHeaders[$headerKeys[$keyPositionInArray]];
-                }
+            // add the AUTHORIZATION header to the request headers, this is
+            // a special header not added to $_SERVER by PHP by default on
+            // Apache
+            $v = $this->_getHeaderValue(apache_request_headers(), "AUTHORIZATION");
+            if (FALSE !== $v) {
+                $requestHeaders['AUTHORIZATION'] = $v;
+            }
+        } else {
+            // On other web servers the HTTP_AUTHORIZATION header may be set,
+            // which we now make available under the AUTHORIZATION key as well
+            $v = $this->_getHeaderValue($requestHeaders, "HTTP_AUTHORIZATION");
+            if (FALSE !== $v) {
+                $requestHeaders['AUTHORIZATION'] = $v;
+            }
         }
 
         return $requestHeaders;
