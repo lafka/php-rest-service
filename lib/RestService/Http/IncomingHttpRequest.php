@@ -106,31 +106,25 @@ class IncomingHttpRequest
         return NULL;
     }
 
-    private function _getHeaderValue(array $h, $key)
-    {
-        $headerKeys = array_keys($h);
-        $keyPositionInArray = array_search(strtolower($key), array_map('strtolower', $headerKeys));
-
-        return FALSE !== $keyPositionInArray ? $h[$headerKeys[$keyPositionInArray]] : FALSE;
-    }
-
     public function getRequestHeaders()
     {
-        $requestHeaders = $_SERVER;
+        $requestHeaders = array();
+
+        // normalize headers from $_SERVER
+        foreach ($_SERVER as $k => $v) {
+            $key = HttpRequest::normalizeHeaderKey($k);
+            $requestHeaders[$key] = $v;
+        }
+
+        // also normalize Apache headers (if available), but do not override
+        // headers from $_SERVER
         if (function_exists("apache_request_headers")) {
-            // add the AUTHORIZATION header to the request headers, this is
-            // a special header not added to $_SERVER by PHP by default on
-            // Apache
-            $v = $this->_getHeaderValue(apache_request_headers(), "AUTHORIZATION");
-            if (FALSE !== $v) {
-                $requestHeaders['AUTHORIZATION'] = $v;
-            }
-        } else {
-            // On other web servers the HTTP_AUTHORIZATION header may be set,
-            // which we now make available under the AUTHORIZATION key as well
-            $v = $this->_getHeaderValue($requestHeaders, "HTTP_AUTHORIZATION");
-            if (FALSE !== $v) {
-                $requestHeaders['AUTHORIZATION'] = $v;
+            $apacheHeaders = apache_request_headers();
+            foreach ($apacheHeaders as $k => $v) {
+            $key = HttpRequest::normalizeHeaderKey($k);
+            if (!array_key_exists($key, $requestHeaders)) {
+                    $requestHeaders[$key] = $v;
+                }
             }
         }
 

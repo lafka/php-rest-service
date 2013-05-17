@@ -112,14 +112,20 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
         $i = new IncomingHttpRequest();
     }
 
-    public function testHttpAuthorizationHeader()
+    public function testNoramlization()
     {
         $_SERVER['SERVER_NAME'] = "foo.example.org";
         $_SERVER['SERVER_PORT'] = 80;
         $_SERVER['REQUEST_URI'] = "/resource";
         $_SERVER['REQUEST_METHOD'] = "GET";
         $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer xyz';
+        $_SERVER['HTTP_USER_AGENT'] = 'Foo/Bar 1.0.0';
         $h = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
-        $this->assertEquals("Bearer xyz", $h->getHeader("Authorization"));
+        $this->assertEquals("Bearer xyz", $h->getHeader("AuThOrIzAtIoN"));
+        $this->assertEquals("Bearer xyz", $h->getHeader("HTTP-AUTHORIZATION"));
+        $this->assertEquals("Bearer xyz", $h->getHeader("HTTP_authorization"));
+        $this->assertEquals("Foo/Bar 1.0.0", $h->getHeader("HTTP_USER_AGENT"));
+        $this->assertEquals("Foo/Bar 1.0.0", $h->getHeader("USER_AGENT"));
+        $this->assertEquals("Foo/Bar 1.0.0", $h->getHeader("USER-AGENT"));
     }
 }

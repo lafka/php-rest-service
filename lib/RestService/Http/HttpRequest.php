@@ -130,42 +130,17 @@ class HttpRequest
         }
     }
 
-    public function setHeader($headerKey, $headerValue)
+    public function setHeader($key, $value)
     {
-        $foundHeaderKey = $this->_getHeaderKey($headerKey);
-        if ($foundHeaderKey === NULL) {
-            $this->_headers[$headerKey] = $headerValue;
-        } else {
-            $this->_headers[$foundHeaderKey] = $headerValue;
-        }
+        $k = self::normalizeHeaderKey($key);
+        $this->_headers[$k] = $value;
     }
 
-    public function getHeader($headerKey)
+    public function getHeader($key)
     {
-        $headerKey = $this->_getHeaderKey($headerKey);
+        $k = self::normalizeHeaderKey($key);
 
-        return $headerKey !== NULL ? $this->_headers[$headerKey] : NULL;
-    }
-
-    /**
-     * Look for a header in a case insensitive way. It is possible to have a
-     * header key "Content-type" or a header key "Content-Type", these should
-     * be treated as the same.
-     *
-     * @param headerName the name of the header to search for
-     * @returns The name of the header as it was set (original case)
-     *
-     */
-    protected function _getHeaderKey($headerKey)
-    {
-        $headerKeys = array_keys($this->_headers);
-        $keyPositionInArray = array_search(strtolower($headerKey), array_map('strtolower', $headerKeys));
-        if (FALSE === $keyPositionInArray) {
-            // replaces dashes with underscores and search again
-            $keyPositionInArray = array_search(str_replace('-', '_', strtolower($headerKey)), array_map('strtolower', $headerKeys));
-        }
-
-        return ($keyPositionInArray === FALSE) ? NULL : $headerKeys[$keyPositionInArray];
+        return array_key_exists($k, $this->_headers) ? $this->_headers[$k] : NULL;
     }
 
     public function getHeaders($formatted = FALSE)
@@ -305,6 +280,16 @@ class HttpRequest
     public function matchRestDefault($callback)
     {
         $callback($this->_methodMatch, $this->_patternMatch);
+    }
+
+    public static function normalizeHeaderKey($key)
+    {
+        // strip HTTP_ if needed
+        if (0 === strpos($key, 'HTTP_') || 0 === strpos($key, 'HTTP-')) {
+            $key = substr($key, 5);
+        }
+        // convert to capitals and replace '-' with '_'
+        return strtoupper(str_replace('-', '_', $key));
     }
 
     public function __toString()

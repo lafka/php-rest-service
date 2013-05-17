@@ -68,8 +68,8 @@ class HttpRequestTest extends PHPUnit_Framework_TestCase
         $h->setHeader("foo", "bar");
         $this->assertEquals("B", $h->getHeader("A"));
         $this->assertEquals("bar", $h->getHeader("foo"));
-        $this->assertEquals(array("A" => "B", "foo" => "bar"), $h->getHeaders(FALSE));
-        $this->assertEquals(array("A: B", "foo: bar"), $h->getHeaders(TRUE));
+        $this->assertEquals(array("A" => "B", "FOO" => "bar"), $h->getHeaders(FALSE));
+        $this->assertEquals(array("A: B", "FOO: bar"), $h->getHeaders(TRUE));
     }
 
     public function testSetGetHeadersCaseInsensitive()
