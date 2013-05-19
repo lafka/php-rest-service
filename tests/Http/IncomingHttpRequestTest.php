@@ -112,7 +112,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
         $i = new IncomingHttpRequest();
     }
 
-    public function testNoramlization()
+    public function testNormalization()
     {
         $_SERVER['SERVER_NAME'] = "foo.example.org";
         $_SERVER['SERVER_PORT'] = 80;
