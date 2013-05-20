@@ -32,7 +32,7 @@ class Config
             throw new ConfigException("configuration '$configFile' file not found");
         }
 
-        $vars = array_merge($vars, $this->_defaultVars());
+        $vars = array_merge($this->_defaultVars(), $vars);
         $varKeys = array_map(function($k) { return "{{{$k}}}"; }, array_keys($vars));
 
         $vars = array_combine($varKeys, array_values($vars));
