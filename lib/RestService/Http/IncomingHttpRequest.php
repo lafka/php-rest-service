@@ -125,6 +125,9 @@ class IncomingHttpRequest
             if (!array_key_exists($key, $requestHeaders)) {
                     $requestHeaders[$key] = $v;
                 }
+        } else {
+            if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+                $requestHeaders['AUTHORIZATION'] = $_SERVER['HTTP_AUTHORIZATION'];
             }
         }
 
