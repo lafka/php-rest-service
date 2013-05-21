@@ -22,7 +22,7 @@ class IncomingHttpRequest
 {
     public function __construct()
     {
-        $required_keys = array("SERVER_NAME", "SERVER_PORT", "REQUEST_URI", "REQUEST_METHOD");
+        $required_keys = array("HTTP_HOST", "SERVER_PORT", "REQUEST_URI", "REQUEST_METHOD");
         foreach ($required_keys as $r) {
             if (!array_key_exists($r, $_SERVER) || empty($_SERVER[$r])) {
                 throw new IncomingHttpRequestException("missing (one or more) required environment variables");
@@ -55,10 +55,10 @@ class IncomingHttpRequest
         }
 
         // server name
-        if (filter_var($_SERVER['SERVER_NAME'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === FALSE) {
-            $name = $_SERVER['SERVER_NAME'];
+        if (filter_var($_SERVER['HTTP_HOST'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === FALSE) {
+            $name = $_SERVER['HTTP_HOST'];
         } else {
-            $name = '[' . $_SERVER['SERVER_NAME'] . ']';
+            $name = '[' . $_SERVER['HTTP_HOST'] . ']';
         }
 
         // server port

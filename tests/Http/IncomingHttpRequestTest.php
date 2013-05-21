@@ -16,6 +16,7 @@
 * limitations under the License.
 */
 
+require_once 'lib/RestService/Http/Uri.php';
 require_once 'lib/RestService/Http/HttpRequest.php';
 require_once 'lib/RestService/Http/IncomingHttpRequest.php';
 require_once 'lib/RestService/Http/IncomingHttpRequestException.php';
@@ -33,6 +34,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['SERVER_PORT'] = $port;
         $_SERVER['SERVER_NAME'] = $name;
+        $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
         $_SERVER['REQUEST_URI'] = $request;
         $_SERVER['REQUEST_METHOD'] = "GET";
         $_SERVER['PATH_INFO'] = "/foo/bar";
@@ -74,6 +76,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['SERVER_PORT'] = $port;
         $_SERVER['SERVER_NAME'] = $name;
+        $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
         $_SERVER['REQUEST_URI'] = $request;
         $_SERVER['REQUEST_METHOD'] = "POST";
         $_SERVER['CONTENT_LENGTH'] = strlen($content);
@@ -118,6 +121,7 @@ class IncomingHttpRequestTest extends PHPUnit_Framework_TestCase
         $_SERVER['SERVER_PORT'] = 80;
         $_SERVER['REQUEST_URI'] = "/resource";
         $_SERVER['REQUEST_METHOD'] = "GET";
+        $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
         $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer xyz';
         $_SERVER['HTTP_USER_AGENT'] = 'Foo/Bar 1.0.0';
         $h = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
