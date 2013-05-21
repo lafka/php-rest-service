@@ -16,6 +16,7 @@
 * limitations under the License.
 */
 
+require_once 'lib/RestService/Http/Uri.php';
 require_once 'lib/RestService/Http/HttpRequest.php';
 require_once 'lib/RestService/Http/IncomingHttpRequest.php';
 require_once 'lib/RestService/Http/IncomingHttpRequestException.php';
